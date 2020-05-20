@@ -1,0 +1,16 @@
+MAINTAINER hq.wang@bjzdgt.com
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
+
+RUN yum install openssh-clients openssh sshpass -y
+
+COPY requirements.txt /
+
+RUN pip install -r /requirements.txt -i http://mirrors.aliyun.com/pypi/simple/   --trusted-host mirrors.aliyun.com
+
+RUN mkdir /mnt/zdgtdui && mkdir /mnt/secrets && touch /mnt/secrets/ansible_running.pid
+
+COPY . /mnt/zdgtdui
+WORKDIR /mnt/zdgtdui
+
+CMD ["/usr/bin/tail","-f","../secrets/ansible_running.pid"]
