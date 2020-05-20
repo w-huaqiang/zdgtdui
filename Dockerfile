@@ -1,3 +1,6 @@
+FROM centos:7.6.1810
+#docker build --network=host -t zdgtdui:v1 .
+
 MAINTAINER hq.wang@bjzdgt.com
 
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
