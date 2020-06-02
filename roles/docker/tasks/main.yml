@@ -1,4 +1,4 @@
-- name: "添加Docker软件源"
+- name: "add Docker repo"
   yum_repository:
     file: docker-ce
     name: "docker-ce-stable"
@@ -8,23 +8,23 @@
     gpgcheck: yes
     enabled: yes
   tags: docker_repo
-- name: "安装Docker-ce"
+- name: "install Docker-ce"
   yum:
     update_cache: yes
     enablerepo: docker-ce-stable
     name: 'docker-ce{% if docker_version is defined and docker_version != ""  %}-{{ docker_version }}{% endif %}'
     state: installed
-- name: "启动Docker"
+- name: "start Docker service"
   systemd:
     name: docker
     state: started
-- name: "修改配置文件"
+- name: "touch daemon.json"
   template:
     src: daemon.json.j2
     dest: /etc/docker/daemon.json
   notify:
     - restart docker
-- name: "重新加载并重启Docker"
+- name: "restart Docker"
   systemd:
     daemon_reload: yes
     name: docker

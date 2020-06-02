@@ -5,7 +5,7 @@ MAINTAINER hq.wang@bjzdgt.com
 
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
 
-RUN yum install openssh-clients openssh sshpass -y
+RUN yum install openssh-clients openssh sshpass openssl -y
 
 COPY requirements.txt /
 

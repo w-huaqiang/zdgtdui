@@ -3,19 +3,27 @@
     msg: "hostname not specified"
   when:
     - hostname is not defined
-- name: "修改主机名"
+- name: "change hostname"
   hostname:
     name: "{{ hostname|quote }}"
   tags: hostname
-- name: "设置主机名ip高亮显示"
+- name: Hosts | populate apiserver_domain_name loadbalancer address into hosts file
+  lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ apiserver_domain_name }}$"
+    line: "{{ vip }} {{ apiserver_domain_name }}"
+    state: present
+    backup: yes
+    unsafe_writes: yes
+- name: "set env file"
   copy:
     src: "ipenv.sh"
     dest: "/etc/profile.d/"
   tags: os_env
-- name: "设置时区"
+- name: "set timezone"
   timezone:
     name: Asia/Shanghai
-- name: "添加阿里云软件源"
+- name: "add yum repo"
   yum_repository:
     file: CentOS-Base
     name: '{{ item.name }}'
@@ -30,7 +38,7 @@
     - { name: "updates",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/updates/$basearch/" }
     - { name: "extras",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/extras/$basearch/" }
   tags: CentOS-Base
-- name: "添加EPEL软件源"
+- name: "add yum EPEL repo"
   yum_repository:
     file: epel
     name: epel
@@ -41,31 +49,31 @@
     gpgcheck: no
     enabled: yes
   tags: epel
-- name: "安装chrony"
+- name: "install chrony"
   yum:
     name: "chrony"
     state: installed
   tags: ntp
-- name: "配置chrony服务"
+- name: "configure chrony service"
   copy:
     src: "chrony.conf"
     dest: "/etc/chrony.conf"
   notify: 
     - restart chrony
   tags: ntp
-- name: "关闭交换分区"
+- name: "set swap off"
   shell: swapoff -a
-- name: "关闭selinux"
+- name: "set selinux off"
   selinux:
     state: disabled
   tags: selinux
-- name: "关闭防火墙"
+- name: "set firewalld off"
   systemd:
     name: firewalld
     enabled: no
     state: stopped
   tags: firewalld
-- name: "修改ssh配置"
+- name: "change ssh configure"
   lineinfile:
     dest: "/etc/ssh/sshd_config"
     regexp: "{{ item.regexp }}"
@@ -80,7 +88,7 @@
   notify: 
     - restart sshd
   tags: sshd
-- name: "更改系统limits"
+- name: "change limits"
   pam_limits:
     dest: "/etc/security/limits.conf"
     domain: '{{ item.limit_domain }}'
@@ -99,7 +107,7 @@
     - { limit_domain: '*',limit_type: 'soft',limit_item: 'nofile', value: '655360' }
     - { limit_domain: '*',limit_type: 'hard',limit_item: 'nofile', value: '655360' }
   tags: limits
-- name: "更改systemd limits"
+- name: "change systemd limits"
   lineinfile:
     dest: "/etc/systemd/system.conf"
     line: "{{ item.line }}"
@@ -108,7 +116,7 @@
     - {line: 'DefaultLimitNOFILE=65535' }
     - {line: 'DefaultLimitNPROC=65535' }
   tags: limits
-- name: "启用依赖内核模块"
+- name: "configure kernel mode"
   modprobe:
     name: "{{ item.line }}"
     state: present
@@ -121,7 +129,7 @@
     - {line: 'ip_vs_wrr' }
     - {line: 'ip_vs_sh' }
   tags: mod
-- name: "修改内核参数"
+- name: "change kernel parameter"
   sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
@@ -161,7 +169,7 @@
     - {name: 'net.bridge.bridge-nf-call-iptables',value: '1' }
     - {name: 'net.bridge.bridge-nf-call-ip6tables',value: '1' }
   tags: sysctl
-- name: "安装基础应用"
+- name: "install some software"
   yum:
     name: "{{ item.line }}"
     state: installed
@@ -181,7 +189,7 @@
     - {line: 'nfs-utils'}
     - {line: 'yum-utils'}
   tags: install_app
-- name: "启用dns缓存"
+- name: "set dns buffer"
   systemd:
     name: nscd
     state: started

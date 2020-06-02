@@ -1,24 +1,31 @@
-#本组内填写etcd服务器及主机名
-[etcd]
-172.16.100.201 hostname=etcd-01
-172.16.100.202 hostname=etcd-02
-172.16.100.203 hostname=etcd-03
+[all]
+3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.22  hostname=node02 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.23  hostname=node03 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.24  hostname=node04 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.25  hostname=node05 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.26  hostname=node06 ansible_ssh_user=root ansible_ssh_pass=password
 
-#本组内填写master服务器及主机名
+[etcd]
+3.1.20.21  
+3.1.20.22
+3.1.20.23
+
+
 [master]
-172.16.100.204 hostname=master-01
-172.16.100.205 hostname=master-02
-172.16.100.206 hostname=master-03
+3.1.20.21  
+3.1.20.22
+3.1.20.23
+
+
+[node]
+3.1.20.24
+3.1.20.25
+3.1.20.26
 
 [haproxy]
-172.16.100.198 hostname=haproxy-01 type=MASTER priority=100
-172.16.100.199 hostname=haproxy-02 type=BACKUP priority=90
+3.1.20.21  type=MASTER priority=100
+3.1.20.22 type=BACKUP priority=90
 [all:vars]
-lb_port=6443
-vip=172.16.100.200
-
-#本组内填写node服务器及主机名
-[node]
-172.16.100.207 hostname=node-01
-172.16.100.208 hostname=node-02
-172.16.100.209 hostname=node-03
+lb_port=9443
+vip=3.1.20.28

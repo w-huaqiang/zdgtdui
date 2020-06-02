@@ -1,4 +1,4 @@
-- name: "安装依赖"
+- name: "Install dependencies"
   yum:
     name: "{{ item.line }}"
     state: installed
@@ -10,7 +10,7 @@
     - {line: 'socat'}
     - {line: 'ipvsadm'}
   tags: node_app
-- name: "创建kubernetes目录"
+- name: "mkdir kubernetes directory"
   file:
     path: "{{ item.line }}"
     state: directory
@@ -21,7 +21,7 @@
     - {line: '/var/lib/kubelet'}
     - {line: "/usr/lib/systemd/system/kubelet.service.d/"}
   tags: dir
-- name: "安装node节点"
+- name: "install node"
   get_url:
     url: "{{ item.line }}"
     dest: /usr/bin/
@@ -29,7 +29,7 @@
     - { line: "{{ kubernetes_url }}/kubelet"}
     - { line: "{{ kubernetes_url }}/kube-proxy"}
   tags: kube_node
-- name: "添加执行权限"
+- name: "add mode +x"
   file:
     dest: "{{ item.line }}"
     mode: 0755
@@ -37,7 +37,7 @@
     - {line: '/usr/bin/kubelet'}
     - {line: '/usr/bin/kube-proxy'}
   tags: kube_node
-- name: "分发node证书文件"
+- name: "distribute node cert file"
   copy:
     src: "{{ item.line }}"
     dest: "/etc/kubernetes/pki/"
@@ -48,15 +48,15 @@
     - {line: "{{ ssl_dir }}/kube-proxy.key"}
     - {line: "{{ ssl_dir }}/token"}
   tags: dis_certs
-- name: "读取当前bootstrap-token-id"
+- name: "read bootstrap-token-id"
   shell: cat /etc/kubernetes/pki/token | grep -v "^#" | awk -F '.' '{print $1}'
   register: token_id
   tags: dis_node_config
-- name: "读取当前bootstrap-token-secret"
+- name: "read bootstrap-token-secret"
   shell: cat /etc/kubernetes/pki/token | grep -v "^#" | awk -F '.' '{print $2}'
   register: token_secret
   tags: dis_node_config
-- name: "生成kubelet配置文件"
+- name: "create kubelet configure file"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -69,18 +69,18 @@
     - {src: "10-kubelet.conf.j2",dest: "/etc/sysconfig/kubelet" }
     - {src: "kube-proxy.conf.j2",dest: "/etc/kubernetes/kube-proxy.conf" }
   tags: dis_node_config
-- name: "删除bootstrap-token文件"
+- name: "remove bootstrap-token file"
   file:
     path: "/etc/kubernetes/pki/token"
     state: absent
-- name: "重启kubelet"
+- name: "restart kubelet"
   systemd:
     name: kubelet
     state: restarted
     daemon_reload: yes
     enabled: yes
   tags: restart_kubelet
-- name: "等待kubelet启动成功"
+- name: "waiting kubelet start success"
   wait_for:
     host: "{{ ansible_default_ipv4.address }}"
     port: 10250
@@ -89,7 +89,7 @@
   vars: 
     ansible_connection: local
   tags: healthcheck
-- name: "获取Pending状态的csr"
+- name: "get Pending csr"
   shell: kubectl get csr| grep Pending | awk '{print $1}'|tr '\n' ' '
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
@@ -100,7 +100,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   tags: approve_node
-- name: "kubelet健康检查"
+- name: "kubelet check "
   uri:
     url: "https://{{ ansible_default_ipv4.address }}:10250/healthz"
     return_content: yes
@@ -112,14 +112,14 @@
   vars: 
     ansible_connection: local
   tags: healthcheck
-- name: "重启kube-proxy"
+- name: "restart kube-proxy"
   systemd:
     name: kube-proxy
     state: restarted
     daemon_reload: yes
     enabled: yes
   tags: restart_proxy
-- name: "等待kube-proxy启动成功"
+- name: "waiting kube-proxy start success"
   wait_for:
     host: "{{ ansible_default_ipv4.address }}"
     port: 10256
@@ -128,7 +128,7 @@
   vars: 
     ansible_connection: local
   tags: healthcheck
-- name: "kube-proxy健康检查"
+- name: "kube-proxy check"
   uri:
     url: "http://{{ ansible_default_ipv4.address }}:10256/healthz"
     return_content: yes
@@ -138,28 +138,28 @@
   vars:
     ansible_connection: local
   tags: healthcheck
-- name: "为master节点打污点"
+- name: "master draint"
   shell: "kubectl taint nodes {{ item }} node-role.kubernetes.io/master=:NoSchedule"
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   with_items:
     - "{{ groups['master'] }}"
   tags: create_label
-- name: "为master节点打标签"
+- name: "master label"
   shell: "kubectl label nodes {{ item }} node-role.kubernetes.io/master="
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   with_items:
     - "{{ groups['master'] }}"
   tags: create_label
-- name: "下载calico部署文件"
+- name: "wget calico file"
   get_url:
     url: "https://docs.projectcalico.org/manifests/calico.yaml"
     dest: /tmp/
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   tags: cni
-- name: "修改calico-etcd部署文件"
+- name: "update calico-etcd install file"
   replace:
     path: "/tmp/calico.yaml"
     regexp: '{{ item.name }}'
@@ -171,7 +171,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   tags: cni
-- name: "部署calico"
+- name: "install calico"
   shell: "kubectl apply -f /tmp/calico.yaml"
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true

@@ -1,4 +1,4 @@
-    - name: "配置ceph软件源"
+    - name: "configure ceph repo"
       yum_repository:
          file: ceph
          name: '{{ item.name }}'
@@ -12,7 +12,7 @@
          - { name: "Ceph-noarch",description: "Ceph noarch packages",baseurl: "https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/noarch" }
          - { name: "ceph-source",description: "Ceph source packages",baseurl: "https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/SRPMS" }
       tags: ceph
-    - name: "安装ceph客户端"
+    - name: "install ceph client"
       yum:
          update_cache: yes
          name: "{{ item.line }}"
