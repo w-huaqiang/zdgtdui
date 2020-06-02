@@ -1,8 +1,8 @@
-- name: "安装etcd"
+- name: "install etcd"
   yum:
     name: etcd
     state: installed
-- name: "分发证书"
+- name: "distribute cert"
   copy:
     src: "{{ item.line }}"
     dest: "/etc/kubernetes/pki/"
@@ -15,13 +15,13 @@
     - {line: '{{ ssl_dir }}/etcd-peer.pem'}
     - {line: '{{ ssl_dir }}/etcd-peer.key'}
   tags: dis_certs
-- name: "修改etcd数据目录权限"
+- name: "update etcd directory mode"
   file:
     path: "/var/lib/etcd"
     owner: etcd
     group: etcd
     state: directory
-- name: "生成etcd配置文件"
+- name: "create etcd configure file"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
