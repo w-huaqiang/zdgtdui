@@ -10,12 +10,12 @@ kube_version=v$1
 
 if [ ! -d roles/master/${kube_version}/files ]
   then 
-    mkdir roles/master/${kube_version}/files
+    mkdir -p roles/master/${kube_version}/files
 fi 
 
 if [ ! -d roles/node/${kube_version}/files ]
   then
-    mkdir roles/node/${kube_version}/files
+    mkdir -p roles/node/${kube_version}/files
 fi
 wget https://storage.googleapis.com/kubernetes-release/release/${kube_version}/kubernetes-server-linux-amd64.tar.gz
 tar zxvf kubernetes-server-linux-amd64.tar.gz
