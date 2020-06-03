@@ -38,6 +38,7 @@
     - { name: "updates",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/updates/$basearch/" }
     - { name: "extras",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/extras/$basearch/" }
   tags: CentOS-Base
+  when: yum_config_internet
 - name: "add yum EPEL repo"
   yum_repository:
     file: epel
@@ -49,6 +50,7 @@
     gpgcheck: no
     enabled: yes
   tags: epel
+  when: yum_config_internet
 - name: "install chrony"
   yum:
     name: "chrony"

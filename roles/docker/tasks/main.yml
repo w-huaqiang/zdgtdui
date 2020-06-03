@@ -8,6 +8,7 @@
     gpgcheck: yes
     enabled: yes
   tags: docker_repo
+  when: yum_config_internet
 - name: "install Docker-ce"
   yum:
     update_cache: yes

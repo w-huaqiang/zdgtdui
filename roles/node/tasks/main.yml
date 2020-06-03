@@ -22,20 +22,15 @@
     - {line: "/usr/lib/systemd/system/kubelet.service.d/"}
   tags: dir
 - name: "install node"
-  get_url:
-    url: "{{ item.line }}"
+  copy:
+    src: "{{ item.line }}"
     dest: /usr/bin/
+    owner: root
+    group: root
+    mode: '0775'
   with_items:
-    - { line: "{{ kubernetes_url }}/kubelet"}
-    - { line: "{{ kubernetes_url }}/kube-proxy"}
-  tags: kube_node
-- name: "add mode +x"
-  file:
-    dest: "{{ item.line }}"
-    mode: 0755
-  with_items:
-    - {line: '/usr/bin/kubelet'}
-    - {line: '/usr/bin/kube-proxy'}
+    - { line: "{{ kubernetes_version }}/kubelet"}
+    - { line: "{{ kubernetes_version }}/kube-proxy"}
   tags: kube_node
 - name: "distribute node cert file"
   copy:

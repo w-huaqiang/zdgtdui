@@ -23,24 +23,17 @@
     state: touch
   tags: audit-log
 - name: "install master"
-  get_url:
-    url: "{{ item.line }}"
-    dest: /usr/bin/
+  copy:
+    src: "{{ item.line }}"
+    dest: "/usr/bin/"
+    owner: root
+    group: root
+    mode: '0755'
   with_items:
-    - {line: "{{ kubernetes_url }}/kube-apiserver"}
-    - {line: "{{ kubernetes_url }}/kube-controller-manager"}
-    - {line: "{{ kubernetes_url }}/kube-scheduler"}
-    - {line: "{{ kubernetes_url }}/kubectl"}
-  tags: kube_master
-- name: "usermod kube"
-  file:
-    dest: "{{ item.line }}"
-    mode: 0755
-  with_items:
-    - {line: '/usr/bin/kube-apiserver'}
-    - {line: '/usr/bin/kube-controller-manager'}
-    - {line: '/usr/bin/kube-scheduler'}
-    - {line: '/usr/bin/kubectl'}
+    - {line: "{{ kubernetes_version }}/kube-apiserver"}
+    - {line: "{{ kubernetes_version }}/kube-controller-manager"}
+    - {line: "{{ kubernetes_version }}/kube-scheduler"}
+    - {line: "{{ kubernetes_version }}/kubectl"}
   tags: kube_master
 - name: "distribute master cert file"
   copy:
