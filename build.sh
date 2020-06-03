@@ -2,7 +2,7 @@
 set -e
 
 zdgtdui_version=v1.1
-kube_version_list=(1.16.8 1.16.10 1.17.6 1.18.3)
+kube_version_list=(1.16.10 1.17.6 1.18.3)
 
 
 get_kube_internet(){
