@@ -1,10 +1,10 @@
 #k8s
 ssl_dir: /etc/ssl/k8s
-kubernetes_version: 1.17.6
+kubernetes_version: v1.17.6
 yum_config_internet: true
 docker_version: 19.03.5
 
-#集群配置
+######
 apiserver_domain_name: apiserver.k8sre.com
 service_ip_range: 10.64.0.0/16
 pod_ip_range: 10.80.0.0/12
