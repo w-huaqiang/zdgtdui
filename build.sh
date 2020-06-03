@@ -31,14 +31,14 @@ get_kube(){
 
 kube_version=v$1
 
-if [ ! -d roles/master/${kube_version}/files ]
+if [ ! -d roles/master/files/${kube_version} ]
   then 
-    mkdir -p roles/master/${kube_version}/files
+    mkdir -p roles/master/files/${kube_version}
 fi 
 
-if [ ! -d roles/node/${kube_version}/files ]
+if [ ! -d roles/node/files/${kube_version} ]
   then
-    mkdir -p roles/node/${kube_version}/files
+    mkdir -p roles/node/files/${kube_version}
 fi
 wget http://3.1.20.1:8081/kubernetes/${kube_version}/kubernetes-server-linux-amd64.tar.gz
 tar zxvf kubernetes-server-linux-amd64.tar.gz
