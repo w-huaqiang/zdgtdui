@@ -26,6 +26,7 @@
 [haproxy]
 3.1.20.21  type=MASTER priority=100
 3.1.20.22 type=BACKUP priority=90
+3.1.20.22 type=BACKUP priority=80
 [all:vars]
 lb_port=9443
 vip=3.1.20.28
