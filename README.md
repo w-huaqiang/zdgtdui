@@ -1,30 +1,29 @@
-		本工具使用ansible playbook初始化系统配置、安装kubernetes高可用集群，并可进行节点扩容、替换集群证书、版本升级等。本playbook安装kubernetes集群为二进制方式部署。
 
+### 一、准备
 
+#### 1.1、build构建kubedui 容器镜像
 
-### 一、下载二进制包
+```bash
+git clone git@3.1.11.12:deliver/zdgtdui.git
+cd zdgtdui
+./build.sh buffer
 
-```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.16.8/kubernetes-server-linux-amd64.tar.gz
-```
-
-- url中v1.16.8替换为需要下载的版本即可。
-
-配置文件服务器。
-
-```
-yum -y install nginx
-tar zxvf kubernetes-server-linux-amd64.tar.gz
-cp kubernetes/server/bin/{kube-apiserver,kube-controller-manager,kube-scheduler,kubectl,kubelet,kube-proxy} /usr/share/nginx/html/
-```
-
-```
-systemctl start nginx
 ```
 
 
 
 ### 二、准备资源
+
+
+#### 2.1、启动kubedui
+
+```bash
+
+docker run -d --network=host --name zdgtdui zdgtdui:v1.1
+
+```
+
+#### 2.2、修改相关参数
 
 请按照inventory格式修改对应资源
 
@@ -197,17 +196,18 @@ ansible-playbook k8s.yml -i inventory -l master-01 -t restart_apiserver,restart_
 
 #### 4.6、升级kubernetes版本
 
-请先将`kubernetes_url`修改为新版本下载链接。
+在`group_vars/all.yml`中先将`kubernetes_version`修改为新版本
 
 ```
-ansible-playbook k8s.yml -i inventory -t kube_master,kube_node
+ansible-playbook cluster.yml -i inventory -t kube_master,kube_node
 ```
 
-然后依次重启每个kubernetes组件。
+重启每个kubernetes组件。
 
-```
-ansible-playbook k8s.yml -i inventory -l master-01 -t restart_apiserver,restart_controller,restart_scheduler,restart_kubelet,restart_proxy,healthcheck
+```bash
+ansible-playbook k8s.yml -i inventory -l master -t restart_apiserver,restart_controller,restart_scheduler
+
+ansible-playbook k8s.yml -i inventory -l master,node -t restart_kubelet,restart_proxy
 ```
 
-- `-l`参数更换为具体节点IP。
 
