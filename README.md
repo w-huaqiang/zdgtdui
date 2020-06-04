@@ -20,6 +20,7 @@ cd zdgtdui
 ```bash
 
 docker run -d --network=host --name zdgtdui zdgtdui:v1.1
+docker exec  -ti zdgtdui bash
 
 ```
 
@@ -28,34 +29,39 @@ docker run -d --network=host --name zdgtdui zdgtdui:v1.1
 请按照inventory格式修改对应资源
 
 ```
-#本组内填写etcd服务器及主机名
-[etcd]
-172.16.100.201 hostname=etcd-01
-172.16.100.202 hostname=etcd-02
-172.16.100.203 hostname=etcd-03
+[all]
+3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.22  hostname=node02 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.23  hostname=node03 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.24  hostname=node04 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.25  hostname=node05 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.26  hostname=node06 ansible_ssh_user=root ansible_ssh_pass=password
 
-#本组内填写master服务器及主机名
+[etcd]
+3.1.20.21  
+3.1.20.22
+3.1.20.23
+
+
 [master]
-172.16.100.204 hostname=master-01
-172.16.100.205 hostname=master-02
-172.16.100.206 hostname=master-03
+3.1.20.21  
+3.1.20.22
+3.1.20.23
+
+
+[node]
+3.1.20.24
+3.1.20.25
+3.1.20.26
 
 [haproxy]
-172.16.100.198 hostname=haproxy-01 type=MASTER priority=100
-172.16.100.199 hostname=haproxy-02 type=BACKUP priority=90
+3.1.20.21  type=MASTER priority=100
+3.1.20.22 type=BACKUP priority=90
+3.1.20.22 type=BACKUP priority=80
 [all:vars]
-lb_port=6443
-vip=172.16.100.200
-
-#本组内填写node服务器及主机名
-[node]
-172.16.100.207 hostname=node-01
-172.16.100.208 hostname=node-02
-172.16.100.209 hostname=node-03
+lb_port=9443
+vip=3.1.20.28
 ```
-
-- 当haproxy和kube-apiserver部署在同一台服务器时，请将`lb_port`修改为其他不冲突的端口。
-
 
 
 ###  三、修改相关配置
@@ -65,9 +71,10 @@ vip=172.16.100.200
 | 配置项                | 说明                                                         |
 | --------------------- | ------------------------------------------------------------ |
 | ssl_dir               | 签发ssl证书保存路径，ansible控制端机器上的路径。默认签发10年有效期的证书 |
-| kubernetes_url        | kubernetes 二进制文件下载链接，请修改为自己的下载服务器地址  |
-| docker_version        | 可通过查看版本yum list docker-ce --showduplicates\|sort -rn  |
-| apiserver_domain_name | kube-apiserver的访问域名，需提前配置解析。不使用域名时，可以指定为负载均衡的IP（本Playbook需指定为haproxy的VIP） |
+| kubernetes_version        | 安装kubernetes 的版本  |
+| yum_config_internet        | 安是否使用互联网上面的yum源  |
+| docker_version        | 可通过查看版本yum list docker-ce --showduplicates\|sort -rn |
+| apiserver_domain_name | kube-apiserver的访问域名。此playbook中默认在 |
 | service_ip_range      | 指定k8s集群service的网段                                     |
 | pod_ip_range          | 指定k8s集群pod的网段                                         |
 | calico_ipv4pool_ipip  | 指定k8s集群使用calico的ipip模式或者bgp模式，Always为ipip模式，off为bgp模式。注意bgp模式不适用于公有云环境。当值为off的时候，切记使用引号`""`引起来。 |
@@ -88,18 +95,7 @@ vip=172.16.100.200
 
 ### 四、使用方法
 
-#### 4.1、安装ansible
-
-在控制端机器执行以下命令安装ansible
-
-```
-yum -y install ansible
-pip install netaddr -i https://mirrors.aliyun.com/pypi/simple/
-```
-
-
-
-#### 4.2、部署集群
+#### 4.1、部署集群
 
 先执行格式化磁盘并挂载目录。如已经自行格式化磁盘并挂载，请跳过此步骤。
 
@@ -109,17 +105,14 @@ ansible-playbook fdisk.yml -i inventory -l master,node -e "disk=sdb dir=/var/lib
 ```
 安装k8s
 ```
-ansible-playbook k8s.yml -i inventory
+ansible-playbook -i inventory cluster.yml
 ```
 
-如是公有云环境，则执行：
+如是公有云环境，不安装`haproy`和`keepalived`则执行：
 
 ```
 ansible-playbook k8s.yml -i inventory --skip-tags=install_haproxy,install_keepalived
 ```
-
-⚠️：默认使用calico ipip网络，部署成功后，可以自行修改。
-
 
 
 #### 4.3、扩容mater节点
@@ -178,10 +171,10 @@ ETCDCTL_API=3 etcdctl \
 逐个删除旧的kubelet证书
 
 ```
-ansible -i inventory master,node -l master-01 -m shell -a "rm -rf /etc/kubernetes/pki/kubelet-*"
+ansible -i inventory master,node -l master,node -m shell -a "rm -rf /etc/kubernetes/pki/kubelet-*"
 ```
 
-- `-l`参数更换为具体节点IP。
+- `-l`参数更换为具体节点IP或者组。
 
 逐个重启节点
 
