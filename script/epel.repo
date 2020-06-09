@@ -1,0 +1,7 @@
+[epel]
+baseurl = https://mirrors.aliyun.com/epel/7/$basearch
+enabled = 1
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+name = Extra Packages for Enterprise Linux 7 - $basearch

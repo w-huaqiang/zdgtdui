@@ -5,6 +5,34 @@ zdgtdui_version=v1.1
 kube_version_list=(1.16.10 1.17.6 1.18.3)
 
 
+LOCAL_DIR=$(dirname $(readlink -f "$0"))
+
+# get prameters
+parameters=$(getopt -o a  -l include-yum,include-registry -n "$0" -- "$@")
+eval set -- "${parameters}"
+
+while true; do
+  case "$1" in
+      -a)
+        build_all=true
+        shift
+        ;;
+      --include-yum)
+        build_yum=true
+        shift
+        ;;
+      --include-registry)
+        build_registry=true
+        shift
+        ;;
+      --)
+        shift
+        break;;
+      *) echo "wrong";exit 1;;
+    esac
+done
+
+
 get_kube_internet(){
 
 kube_version=v$1
@@ -52,10 +80,10 @@ rm -rf kubernetes-server-linux-amd64.tar.gz
 
 for i in ${kube_version_list[*]}
   do
-  if [ ! $1 ];then
-      get_kube_internet $i
+  if [ "$1" == "buffer" ];then
+      get_kube $i     
     else
-      get_kube $i
+      get_kube_internet $i
     fi
 
   done
