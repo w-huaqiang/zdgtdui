@@ -16,7 +16,7 @@ RUN yum -y install epel-release && \
     yum clean all
 
 RUN mkdir -p /repo && \
-    mkdir /logs/nginx && \
+    mkdir -p /logs/nginx && \
     touch /logs/nginx/access.log && \
     touch /logs/nginx/error.log && \
     chown nginx.nginx /logs/nginx -R
