@@ -12,11 +12,15 @@ COPY epel.repo /etc/yum.repos.d/
 
 RUN yum -y install epel-release && \
     yum -y update && \
-    yum -y install supervisor createrepo yum-utils nginx && \
+    yum -y install createrepo yum-utils nginx && \
     yum clean all
 
-RUN mkdir -p /logs && \
-    mkdir -p /repo
+RUN mkdir -p /repo && \
+    mkdir /logs/nginx && \
+    touch /logs/nginx/access.log && \
+    touch /logs/nginx/error.log && \
+    chown nginx.nginx /logs/nginx -R
+
 
 RUN yumdownloader --resolve --destdir=/repo vim \
         mtr \
