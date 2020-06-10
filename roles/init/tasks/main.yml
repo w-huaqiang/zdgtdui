@@ -51,6 +51,17 @@
     enabled: yes
   tags: epel
   when: yum_config_internet
+- name: "backup yum file"
+  shell: "if [ ! -d /etc/yum.repos.backup-zdgt ];then mkdir /etc/yum.repos.backup-zdgt; fi && mv -f /etc/yum.repos.d/* /etc/yum.repos.backup-zdgt/"
+  ignore_errors: yes
+  tags: local-yum
+  when: not yum_config_internet
+- name: "add local yum"
+  template:
+    src: "zdgt-k8s.repo.j2"
+    dest: "/etc/yum.repos.d/zdgt-k8s.repo"
+  tags: local-yum
+  when: not yum_config_internet
 - name: "install chrony"
   yum:
     name: "chrony"

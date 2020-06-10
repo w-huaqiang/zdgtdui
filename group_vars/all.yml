@@ -1,8 +1,11 @@
 #k8s
 ssl_dir: /etc/ssl/k8s
 kubernetes_version: v1.17.6
-yum_config_internet: true
 docker_version: 19.03.5
+
+yum_config_internet: false
+yum_local_ip: 3.1.20.108
+yum_url: 'http://{{ yum_local_ip }}'
 
 ######
 apiserver_domain_name: apiserver.k8sre.com
