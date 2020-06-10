@@ -44,6 +44,8 @@ RUN yumdownloader --resolve --destdir=/repo vim \
         haproxy \
         docker-ce-19.03.5
 
+RUN cd /repo && createrepo .
+
 EXPOSE 80
 VOLUME /repo /logs
 
