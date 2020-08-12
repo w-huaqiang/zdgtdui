@@ -1,0 +1,84 @@
+- name: "add yum Centos-Base repo"
+  yum_repository:
+    file: CentOS-Base
+    name: '{{ item.name }}'
+    description: '{{ item.description}}'
+    baseurl: '{{ item.baseurl }}'
+    gpgkey: "https://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7"
+    failovermethod: priority
+    gpgcheck: yes
+    enabled: yes
+  with_items:
+    - { name: "base",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/os/$basearch/" }
+    - { name: "updates",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/updates/$basearch/" }
+    - { name: "extras",description: "CentOS-$releasever",baseurl: "https://mirrors.aliyun.com/centos/$releasever/extras/$basearch/" }
+  tags: CentOS-Base
+- name: "add yum EPEL repo"
+  yum_repository:
+    file: epel
+    name: epel
+    description: Extra Packages for Enterprise Linux 7 - $basearch
+    baseurl: "https://mirrors.aliyun.com/epel/7/$basearch"
+    gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
+    failovermethod: priority
+    gpgcheck: no
+    enabled: yes
+  tags: epel
+- name: "configure ceph repo"
+  yum_repository:
+    file: ceph
+    name: '{{ item.name }}'
+    description: '{{ item.description}}'
+    baseurl: '{{ item.baseurl }}'
+    gpgkey: "https://mirrors.aliyun.com/ceph/keys/release.asc"
+    gpgcheck: yes
+    enabled: yes
+  with_items:
+    - { name: "Ceph",description: "Ceph packages for $basearch",baseurl: "https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/$basearch" }
+    - { name: "Ceph-noarch",description: "Ceph noarch packages",baseurl: "https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/noarch" }
+    - { name: "ceph-source",description: "Ceph source packages",baseurl: "https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/SRPMS" }
+- name: "add Docker repo"
+  yum_repository:
+    file: docker-ce
+    name: "docker-ce-stable"
+    description: "Docker CE Stable - $basearch"
+    baseurl: "https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/stable"
+    gpgkey: "https://mirrors.aliyun.com/docker-ce/linux/centos/gpg"
+    gpgcheck: yes
+    enabled: yes
+- name: "install yumdownloader"
+  yum:
+    name: "yum-utils"
+    state: installed
+- name: "mkdir /opt/repo"
+  file:
+    path: "/opt/repo"
+    state: directory
+- name: "download file"
+  shell: "yumdownloader --resolve --destdir /opt/repo {{item.name}}"
+  with_items:
+    - { name: "libnetfilter_conntrack-devel" }
+    - { name: "libnetfilter_conntrack" }
+    - { name: "conntrack-tools" }
+    - { name: "conntrack" }
+    - { name: "socat" }
+    - { name: "ipvsadm" }
+    - { name: "haproxy" }
+    - { name: "chrony" }
+    - {name: "vim" }
+    - {name: "mtr" }
+    - {name: "nscd" }
+    - {name: "curl" }
+    - {name: "wget" }
+    - {name: "lsof" }
+    - {name: "lrzsz" }
+    - {name: "rsync"}
+    - {name: "telnet"}
+    - {name: "bash-completion" }
+    - {name: "nmap-ncat" }
+    - {name: "net-tools" }
+    - {name: "nfs-utils" }
+    - {name: "yum-utils" }
+    - {name: "keepalived" }
+    - {name: "etcd" }
+    - {name: "docker-ce-{{ docker_version }}" }

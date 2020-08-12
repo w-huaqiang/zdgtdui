@@ -154,6 +154,15 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   tags: cni
+  when: yum_config_internet
+- name: "copy calico file"
+  copy:
+    src: "calico.yaml"
+    dest: /tmp/
+  delegate_to: "{{ groups['master'][0] }}"
+  run_once: true
+  tags: cni
+  when: not yum_config_internet
 - name: "update calico-etcd install file"
   replace:
     path: "/tmp/calico.yaml"

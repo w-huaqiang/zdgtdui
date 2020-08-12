@@ -6,6 +6,12 @@
 3.1.20.25  hostname=node05 ansible_ssh_user=root ansible_ssh_pass=password
 3.1.20.26  hostname=node06 ansible_ssh_user=root ansible_ssh_pass=password
 
+
+# when download rpm to local,you can use download host which can access internet to download package.when
+# install kubernetes cluster,which is not be used.
+[download]
+3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=123456
+
 [etcd]
 3.1.20.21  
 3.1.20.22

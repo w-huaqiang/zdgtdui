@@ -1,0 +1,5 @@
+---
+- name: "download"
+  hosts: download
+  roles:
+    - { role: 'download', when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'" }
