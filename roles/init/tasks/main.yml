@@ -200,7 +200,6 @@
     - {line: 'nmap-ncat'}
     - {line: 'net-tools'}
     - {line: 'nfs-utils'}
-    - {line: 'yum-utils'}
   tags: install_app
 - name: "set dns buffer"
   systemd:
