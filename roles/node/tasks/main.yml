@@ -158,7 +158,7 @@
 - name: "copy calico file"
   template:
     src: "calico.yaml.j2"
-    dest: /tmp/
+    dest: /tmp/calico.yaml
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   tags: cni

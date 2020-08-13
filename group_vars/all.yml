@@ -6,7 +6,7 @@ docker_version: 19.03.5
 yum_config_internet: false
 yum_local_ip: 3.1.20.108
 yum_url: 'http://{{ yum_local_ip }}/yum'
-registry_url: 'http://{{ yum_local_ip }}:5000'
+registry_url: '{{ yum_local_ip }}:5000'
 
 ######
 apiserver_domain_name: apiserver.k8sre.com
