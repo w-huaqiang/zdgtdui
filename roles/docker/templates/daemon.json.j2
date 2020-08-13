@@ -3,6 +3,7 @@
     "https://hub-mirror.c.163.com",
     "https://docker.mirrors.ustc.edu.cn/"
  ],
+ "insecure-registries" : ["{{ registry_url }}"],
  "exec-opts": ["native.cgroupdriver=systemd"],
  "storage-driver": "overlay2",
  "storage-opts":["overlay2.override_kernel_check=true"],
