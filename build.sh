@@ -100,6 +100,8 @@ rm -rf kubernetes-server-linux-amd64.tar.gz
 
 }
 
+get_images
+
 
 for i in ${kube_version_list[*]}
   do
