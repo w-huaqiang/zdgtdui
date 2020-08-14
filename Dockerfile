@@ -6,7 +6,7 @@ LABEL MAINTAINER=wanghq@bjzdgt.com
 RUN yum install openssh-clients openssh sshpass openssl \
      zlib-devel bzip2-devel openssl-devel ncurses-devel \
      sqlite-devel readline-devel tk-devel gdbm-devel db4-devel \
-     libpcap-devel xz-devel wget -y
+     libpcap-devel xz-devel wget gcc -y
 
 RUN mkdir /root/python36 && wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && tar -xvf Python-3.6.8.tgz \
      && cd Python-3.6.8 && ./configure --prefix=/root/python36 && make && make install
