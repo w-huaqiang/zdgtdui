@@ -1,10 +1,10 @@
 [all]
-3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=password
-3.1.20.22  hostname=node02 ansible_ssh_user=root ansible_ssh_pass=password
-3.1.20.23  hostname=node03 ansible_ssh_user=root ansible_ssh_pass=password
-3.1.20.24  hostname=node04 ansible_ssh_user=root ansible_ssh_pass=password
-3.1.20.25  hostname=node05 ansible_ssh_user=root ansible_ssh_pass=password
-3.1.20.26  hostname=node06 ansible_ssh_user=root ansible_ssh_pass=password
+3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=123456
+3.1.20.22  hostname=node02 ansible_ssh_user=root ansible_ssh_pass=123456
+3.1.20.23  hostname=node03 ansible_ssh_user=root ansible_ssh_pass=123456
+3.1.20.24  hostname=node04 ansible_ssh_user=root ansible_ssh_pass=123456
+3.1.20.25  hostname=node05 ansible_ssh_user=root ansible_ssh_pass=123456
+3.1.20.26  hostname=node06 ansible_ssh_user=root ansible_ssh_pass=123456
 
 
 # when download rpm to local,you can use download host which can access internet to download package.when

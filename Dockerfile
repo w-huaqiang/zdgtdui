@@ -25,4 +25,7 @@ RUN mkdir /mnt/zdgtdui && mkdir /mnt/secrets && touch /mnt/secrets/ansible_runni
 COPY . /mnt/zdgtdui
 WORKDIR /mnt/zdgtdui
 
+ENV PATH=$PATH:/root/python36/bin/
+
+
 CMD ["/usr/bin/tail","-f","../secrets/ansible_running.pid"]
