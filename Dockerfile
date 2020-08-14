@@ -1,5 +1,5 @@
 FROM centos:7.6.1810
-#docker build --network=host -t zdgtdui:v1 .
+#docker build --network=host -t zdgtdui:v1.1 .
 
 LABEL MAINTAINER=wanghq@bjzdgt.com
 

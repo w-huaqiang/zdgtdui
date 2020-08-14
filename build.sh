@@ -1,11 +1,19 @@
 #!/bin/bash
 set -e
+LOCAL_DIR=$(dirname $(readlink -f "$0"))
 
 zdgtdui_version=v1.1
 kube_version_list=(1.16.10 1.17.6 1.18.3)
 
+# the images which you should pull
+kube_images=(calico/cni:v3.15.1 \
+calico/cni:v3.15.1 \
+calico/pod2daemon-flexvol:v3.15.1 \
+calico/node:v3.15.1 \
+calico/kube-controllers:v3.15.1 \
+rancher/pause:3.1)
 
-LOCAL_DIR=$(dirname $(readlink -f "$0"))
+
 
 # get prameters
 parameters=$(getopt -o a  -l include-yum,include-registry -n "$0" -- "$@")
@@ -31,6 +39,21 @@ while true; do
       *) echo "wrong";exit 1;;
     esac
 done
+
+
+get_images(){
+    
+    docker run -d --name zdgtdui-registry -p 5000:5000 -v /opt/zdgtregistry:/var/lib/registry -e REGISTRY_STORAGE_DELETE_ENABLED="true" registry
+    for i in ${kube_images[*]}
+        do
+          docker pull $i
+          docker tag $i 127.0.0.1:5000/$i
+          docker push 127.0.0.1:5000/$i
+        done
+    docker export -o zdgtdui_registry.tar  zdgtdui-registry
+}
+
+
 
 
 get_kube_internet(){
@@ -89,3 +112,12 @@ for i in ${kube_version_list[*]}
   done
 
 docker build --network=host -t zdgtdui:$zdgtdui_version .
+docker save zdgtdui:$zdgtdui_version -o zdgtdui.tar.gz
+docker save registry -o zdgtregistry.tar.gz
+mv /opt/zdgtregistry .
+
+echo ################# info ###########################
+echo # zdgtdui ansible-playbook image: zdgtdui.tar.gz  #
+echo # registry image: zdgtregistry.tar.gz             #
+echo # registry dir: zdgtregistry                      #
+echo ###################################################
