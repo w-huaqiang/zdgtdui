@@ -106,7 +106,7 @@ fi
 
 for i in ${kube_version_list[*]}
   do
-  if [ "$1" == "buffer" ];then
+    if [ "$1" == "buffer" ];then
       get_kube $i     
     else
       get_kube_internet $i
