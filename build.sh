@@ -68,13 +68,14 @@ if [ ! -d roles/node/files/${kube_version} ]
   then
     mkdir -p roles/node/files/${kube_version}
 fi
-wget https://storage.googleapis.com/kubernetes-release/release/${kube_version}/kubernetes-server-linux-amd64.tar.gz
-tar zxvf kubernetes-server-linux-amd64.tar.gz
-cp kubernetes/server/bin/{kube-apiserver,kube-controller-manager,kube-scheduler,kubectl} roles/master/files/${kube_version}/
-cp kubernetes/server/bin/{kubelet,kube-proxy} roles/node/files//${kube_version}/
-rm -rf kubernetes
-rm -rf kubernetes-server-linux-amd64.tar.gz
-
+if [ ! -f roles/master/files/${kube_version}/kube-apiserver ];then
+  wget https://storage.googleapis.com/kubernetes-release/release/${kube_version}/kubernetes-server-linux-amd64.tar.gz
+  tar zxvf kubernetes-server-linux-amd64.tar.gz
+  cp kubernetes/server/bin/{kube-apiserver,kube-controller-manager,kube-scheduler,kubectl} roles/master/files/${kube_version}/
+  cp kubernetes/server/bin/{kubelet,kube-proxy} roles/node/files//${kube_version}/
+  rm -rf kubernetes
+  rm -rf kubernetes-server-linux-amd64.tar.gz
+fi
 }
 
 get_kube(){
