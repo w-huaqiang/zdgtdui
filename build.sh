@@ -117,10 +117,11 @@ for i in ${kube_version_list[*]}
 docker build --network=host -t zdgtdui:$zdgtdui_version .
 docker save zdgtdui:$zdgtdui_version -o zdgtdui.tar.gz
 docker save registry -o zdgtregistry.tar.gz
-mv /opt/zdgtregistry .
 
-echo ################# info ###########################
-echo # zdgtdui ansible-playbook image: zdgtdui.tar.gz  #
-echo # registry image: zdgtregistry.tar.gz             #
-echo # registry dir: zdgtregistry                      #
-echo ###################################################
+echo '''################# info ###########################
+# zdgtdui ansible-playbook image: zdgtdui.tar.gz  
+# registry image: zdgtregistry.tar.gz             
+# registry dir: /opt/zdgtregistry
+# docker run -d --name zdgtdui-registry -p 5000:5000 \
+    -v /opt/zdgtregistry:/var/lib/registry registry
+#########################################################'''
