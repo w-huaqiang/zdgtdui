@@ -94,7 +94,7 @@ fi
 wget http://3.1.20.1:8081/kubernetes/${kube_version}/kubernetes-server-linux-amd64.tar.gz
 tar zxvf kubernetes-server-linux-amd64.tar.gz
 cp kubernetes/server/bin/{kube-apiserver,kube-controller-manager,kube-scheduler,kubectl} roles/master/files/${kube_version}/
-cp kubernetes/server/bin/{kubelet,kube-proxy} roles/node/files//${kube_version}/
+cp kubernetes/server/bin/{kubelet,kube-proxy} roles/node/files/${kube_version}/
 rm -rf kubernetes
 rm -rf kubernetes-server-linux-amd64.tar.gz
 
