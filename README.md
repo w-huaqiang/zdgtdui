@@ -1,15 +1,27 @@
 
-### 一、准备
+### 一、pre install
 
 #### 1.1、build构建kubedui 容器镜像
 
+做这个操作，将会有两个docker image `zdgtdui:v1.1`、`registry:latest`和一个目录 `/opt/zdgtregistry`
+
+1.ansible and k8s file all in image `zdgtdui:v1.1`
+2.cni pause image in registry.you need `registry:latest`
+3.`/opt/zdgtregistry` store image of `registry:latest`
+
 ```bash
-git clone git@3.1.11.12:deliver/zdgtdui.git
-cd zdgtdui
-./build.sh buffer
+$ git clone git@3.1.11.12:deliver/zdgtdui.git
+$ cd zdgtdui
+$ ./build.sh --include-registry
 
 ```
+#### 1.2、准备安装时需要的yum资源
+若使用互联网上的yum则不需要任何操作，若本地yum,则需要提前下载，可以使用downlaod下载
+```bash
+$ docker exec  -ti zdgtdui bash
+$ ansible-playbook -i inventory download
 
+```
 
 
 ### 二、准备资源
@@ -18,13 +30,17 @@ cd zdgtdui
 #### 2.1、启动kubedui
 
 ```bash
-
-docker run -d --network=host --name zdgtdui zdgtdui:v1.1
-docker exec  -ti zdgtdui bash
+$ docker run -d --name zdgtdui-registry -p 5000:5000 \
+    -v /opt/zdgtregistry:/var/lib/registry registry
+$ docker run -d --network=host --name zdgtdui zdgtdui:v1.1
+$ docker exec  -ti zdgtdui bash
 
 ```
+#### 2.2、启动本地yum
+使用httpd或者docker启动httpd挂载
 
-#### 2.2、修改相关参数
+
+#### 2.3、修改相关参数
 
 请按照inventory格式修改对应资源
 
@@ -41,6 +57,10 @@ docker exec  -ti zdgtdui bash
 3.1.20.21  
 3.1.20.22
 3.1.20.23
+
+# install kubernetes cluster,which is not be used.
+[download]
+3.1.20.21  hostname=node01 ansible_ssh_user=root ansible_ssh_pass=123456
 
 
 [master]
