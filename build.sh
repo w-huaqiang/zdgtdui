@@ -50,7 +50,6 @@ get_images(){
           docker tag $i 127.0.0.1:5000/$i
           docker push 127.0.0.1:5000/$i
         done
-    docker export -o zdgtdui_registry.tar  zdgtdui-registry
 }
 
 
@@ -100,8 +99,9 @@ rm -rf kubernetes-server-linux-amd64.tar.gz
 
 }
 
-get_images
-
+if [ $build_registry ];then
+  get_images
+fi
 
 for i in ${kube_version_list[*]}
   do
